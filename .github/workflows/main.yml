@@ -2,8 +2,6 @@ name: Android CI
 
 on:
   workflow_dispatch:
-  schedule:
-  - cron: "20 5 2,9,16,23 * *"
 
 jobs:
   build:
@@ -26,7 +24,7 @@ jobs:
       - name: Set ndkver,sdkver and work_dir
         run: |
           echo "NDK_VER=android-ndk-r27c" >> $GITHUB_ENV
-          echo "SDK_VER=33" >> $GITHUB_ENV
+          echo "SDK_VER=28" >> $GITHUB_ENV
           echo "WORK_DIR=$(pwd)" >> $GITHUB_ENV
 
       - name: Download and extract NDK
@@ -38,26 +36,8 @@ jobs:
 
       - name: Build
         run: |
-          envsubst <android-drm-${{matrix.arch}} >build-crossfile-drm
-          git clone https://gitlab.freedesktop.org/mesa/drm.git
-          cd drm
-          meson setup "build-android" \
-            --prefix=/tmp/drm-static \
-            --cross-file "../build-crossfile-drm" \
-            -Ddefault_library=static \
-            -Dintel=disabled \
-            -Dradeon=disabled \
-            -Damdgpu=disabled \
-            -Dnouveau=disabled \
-            -Dvmwgfx=disabled \
-            -Dfreedreno=enabled \
-            -Dvc4=disabled \
-            -Detnaviv=disabled \
-            -Dfreedreno-kgsl=true
-          ninja -C "build-android" install
-          cd ..
           envsubst <android-${{matrix.arch}} >build-crossfile
-          git clone https://gitlab.freedesktop.org/mesa/mesa
+          git clone --branch mesa-24.2.8 https://gitlab.freedesktop.org/mesa/mesa
           cd mesa
           meson setup "build-android" \
             --cross-file "../build-crossfile" \
