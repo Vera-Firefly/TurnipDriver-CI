@@ -24,7 +24,7 @@ jobs:
       - name: Set ndkver,sdkver and work_dir
         run: |
           echo "NDK_VER=android-ndk-r25c" >> $GITHUB_ENV
-          echo "SDK_VER=33" >> $GITHUB_ENV
+          echo "SDK_VER=29" >> $GITHUB_ENV
           echo "WORK_DIR=$(pwd)" >> $GITHUB_ENV
 
       - name: Download and extract NDK
@@ -37,7 +37,7 @@ jobs:
       - name: Build
         run: |
           envsubst <android-${{matrix.arch}} >build-crossfile
-          git clone --branch mesa-25.0.0-rc1 https://gitlab.freedesktop.org/mesa/mesa
+          git clone --branch mesa-25.0.0-rc2 https://gitlab.freedesktop.org/mesa/mesa
           cd mesa
           meson setup "build-android" \
             --cross-file "../build-crossfile" \
