@@ -25,8 +25,8 @@ jobs:
 
       - name: Set ndkver,sdkver and work_dir
         run: |
-          echo "NDK_VER=android-ndk-r27c" >> $GITHUB_ENV
-          echo "SDK_VER=33" >> $GITHUB_ENV
+          echo "NDK_VER=android-ndk-r28b" >> $GITHUB_ENV
+          echo "SDK_VER=29" >> $GITHUB_ENV
           echo "WORK_DIR=$(pwd)" >> $GITHUB_ENV
 
       - name: Download and extract NDK
@@ -70,7 +70,8 @@ jobs:
             -Dvulkan-drivers=freedreno \
             -Dfreedreno-kmds=kgsl \
             -Dandroid-strict=false \
-            -Db_lto=true
+            -Db_lto=true \
+            -Degl=disabled
           ninja -C "build-android" install
           mkdir /tmp/mesa/turnip
           cp /tmp/mesa/lib/libvulkan_freedreno.so /tmp/mesa/turnip/libvulkan_freedreno.so
