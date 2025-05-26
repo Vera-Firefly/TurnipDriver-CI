@@ -1,10 +1,7 @@
 name: Android CI
 
 on:
-  workflow_dispatch:
-  schedule:
-  - cron: "20 5 2,9,16,23 * *"
-
+  push:
 jobs:
   build:
     strategy:
@@ -13,7 +10,7 @@ jobs:
       fail-fast: false
 
     name: "Build for Arm64"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:   
       - uses: actions/checkout@v4
 
@@ -29,35 +26,18 @@ jobs:
           echo "SDK_VER=29" >> $GITHUB_ENV
           echo "WORK_DIR=$(pwd)" >> $GITHUB_ENV
 
-      - name: Download and extract NDK
+      - name: Download and extract NDK/Mesa
         run: |
           echo "Downloading android-ndk from google server ..."
           curl https://dl.google.com/android/repository/${NDK_VER}-linux.zip --output ${NDK_VER}-linux.zip &> /dev/null
           echo "Extracting android-ndk to a folder ..."
           unzip ${NDK_VER}-linux.zip &> /dev/null
+          echo "Get Mesa Repository ..."
+          git clone --depth 1 --branch mesa-25.1.1 https://gitlab.freedesktop.org/mesa/mesa
 
       - name: Build
         run: |
-          envsubst <android-drm-${{matrix.arch}} >build-crossfile-drm
-          git clone https://gitlab.freedesktop.org/mesa/drm.git
-          cd drm
-          meson setup "build-android" \
-            --prefix=/tmp/drm-static \
-            --cross-file "../build-crossfile-drm" \
-            -Ddefault_library=static \
-            -Dintel=disabled \
-            -Dradeon=disabled \
-            -Damdgpu=disabled \
-            -Dnouveau=disabled \
-            -Dvmwgfx=disabled \
-            -Dfreedreno=enabled \
-            -Dvc4=disabled \
-            -Detnaviv=disabled \
-            -Dfreedreno-kgsl=true
-          ninja -C "build-android" install
-          cd ..
-          envsubst <android-${{matrix.arch}} >build-crossfile
-          git clone https://gitlab.freedesktop.org/mesa/mesa
+          envsubst <android-${{matrix.arch}}>build-crossfile
           cd mesa
           meson setup "build-android" \
             --cross-file "../build-crossfile" \
