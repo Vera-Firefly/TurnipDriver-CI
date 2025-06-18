@@ -1,9 +1,7 @@
 name: Android CI
 
 on:
-  workflow_dispatch:
-  schedule:
-  - cron: "20 5 2,9,16,23 * *"
+  push:
 
 jobs:
   build:
@@ -36,7 +34,7 @@ jobs:
           echo "Extracting android-ndk to a folder ..."
           unzip ${NDK_VER}-linux.zip &> /dev/null
           echo "Get Mesa Repository ..."
-          git clone --depth 1 --branch main https://gitlab.freedesktop.org/mesa/mesa
+          git clone --depth 1 --branch mesa-25.1.2 https://gitlab.freedesktop.org/mesa/mesa
 
       - name: Build
         run: |
